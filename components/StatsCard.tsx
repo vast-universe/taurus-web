@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Stats } from '@/lib/api';
 
 interface StatsCardProps {
@@ -8,6 +9,7 @@ interface StatsCardProps {
 }
 
 export function StatsCard({ stats, loading }: StatsCardProps) {
+  const [showLevelStats, setShowLevelStats] = useState(false);
   if (loading) {
     return (
       <div className="rounded-2xl bg-zinc-800/50 border border-zinc-700/50 p-6 animate-pulse">
@@ -106,44 +108,60 @@ export function StatsCard({ stats, loading }: StatsCardProps) {
         </div>
       )}
 
-      {/* Level Stats */}
+      {/* Level Stats - Collapsible */}
       {stats.by_level && (
         <div className="mt-6 pt-6 border-t border-zinc-700/50">
-          <h3 className="text-sm font-medium text-zinc-400 mb-4">按等级统计</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {(['S', 'A', 'B', 'C'] as const).map(level => {
-              const levelStats = stats.by_level![level];
-              const config = levelConfig[level];
-              const levelWinRate = levelStats.total > 0 ? levelStats.win_rate * 100 : 0;
-              const isLevelGood = levelWinRate >= 55.56;
+          <button
+            onClick={() => setShowLevelStats(!showLevelStats)}
+            className="w-full flex items-center justify-between text-sm font-medium text-zinc-400 hover:text-zinc-300 transition-colors"
+          >
+            <span>按等级统计</span>
+            <svg 
+              className={`w-4 h-4 transition-transform duration-200 ${showLevelStats ? 'rotate-180' : ''}`}
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          {showLevelStats && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+              {(['S', 'A', 'B', 'C'] as const).map(level => {
+                const levelStats = stats.by_level![level];
+                const config = levelConfig[level];
+                const levelWinRate = levelStats.total > 0 ? levelStats.win_rate * 100 : 0;
+                const isLevelGood = levelWinRate >= 55.56;
 
-              return (
-                <div 
-                  key={level}
-                  className={`rounded-xl p-3 ${config.bg} border ${config.border}`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`font-bold ${config.color}`}>{config.label}</span>
-                    <span className="text-xs text-zinc-500">{levelStats.total}笔</span>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-500">胜率</span>
-                      <span className={isLevelGood ? 'text-green-400' : 'text-zinc-400'}>
-                        {levelWinRate.toFixed(1)}%
-                      </span>
+                return (
+                  <div 
+                    key={level}
+                    className={`rounded-xl p-3 ${config.bg} border ${config.border}`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`font-bold ${config.color}`}>{config.label}</span>
+                      <span className="text-xs text-zinc-500">{levelStats.total}笔</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-zinc-500">盈亏</span>
-                      <span className={levelStats.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
-                        {levelStats.pnl >= 0 ? '+' : ''}{levelStats.pnl.toFixed(1)}U
-                      </span>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-zinc-500">胜率</span>
+                        <span className={isLevelGood ? 'text-green-400' : 'text-zinc-400'}>
+                          {levelWinRate.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-zinc-500">盈亏</span>
+                        <span className={levelStats.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
+                          {levelStats.pnl >= 0 ? '+' : ''}{levelStats.pnl.toFixed(1)}U
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

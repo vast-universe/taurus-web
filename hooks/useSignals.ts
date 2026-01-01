@@ -29,7 +29,13 @@ export function useSignals(limit = 20) {
     const unsubscribe = signalWS.subscribe((message: WSMessage) => {
       if (message.type === 'signal') {
         const newSignal = message.data as Signal;
-        setSignals(prev => [newSignal, ...prev.slice(0, limit - 1)]);
+        setSignals(prev => {
+          // 检查是否已存在，避免重复
+          if (prev.some(s => s.id === newSignal.id)) {
+            return prev;
+          }
+          return [newSignal, ...prev.slice(0, limit - 1)];
+        });
       } else if (message.type === 'settlement') {
         const settlement = message.data as SettlementData;
         setSignals(prev => prev.map(s => 

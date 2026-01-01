@@ -1,13 +1,16 @@
 'use client';
 
 import { useSignals, useStats } from '@/hooks/useSignals';
+import { useTicker } from '@/hooks/useTicker';
 import { SignalCard } from '@/components/SignalCard';
 import { StatsCard } from '@/components/StatsCard';
+import { TickerCard } from '@/components/TickerCard';
 import { ConnectionStatus } from '@/components/ConnectionStatus';
 
 export default function Home() {
   const { signals, loading: signalsLoading } = useSignals(20);
   const { stats, loading: statsLoading } = useStats();
+  const { tickers } = useTicker();
 
   const pendingSignals = signals.filter(s => s.status === 'pending');
   const settledSignals = signals.filter(s => s.status === 'settled');
@@ -26,6 +29,15 @@ export default function Home() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        {/* 实时行情 */}
+        <section>
+          <h2 className="text-lg font-semibold text-white mb-3">实时行情</h2>
+          <div className="grid gap-3 md:grid-cols-2">
+            <TickerCard ticker={tickers.BTCUSDT} />
+            <TickerCard ticker={tickers.ETHUSDT} />
+          </div>
+        </section>
+
         <StatsCard stats={stats} loading={statsLoading} />
 
         {pendingSignals.length > 0 && (

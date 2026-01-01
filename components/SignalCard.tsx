@@ -135,14 +135,25 @@ export function SignalCard({ signal }: SignalCardProps) {
                   {signal.pnl && signal.pnl > 0 ? '+' : ''}{signal.pnl?.toFixed(1)}U
                 </div>
               </div>
-              {signal.settle_price && (
-                <div className="flex items-center justify-between text-xs text-zinc-500">
-                  <span>结算价: ${signal.settle_price.toLocaleString()}</span>
+              <div className="flex items-center justify-between text-xs text-zinc-500">
+                {/* 左边结算时间 */}
+                <span>
+                  结算: {signal.settle_at
+                    ? new Date(signal.settle_at).toLocaleString('zh-CN', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : '--'}
+                </span>
+                {/* 右边价格和涨幅 */}
+                {signal.settle_price && (
                   <span>
-                    {((signal.settle_price / signal.entry_price - 1) * 100).toFixed(2)}%
+                    ${signal.settle_price.toLocaleString()} ({((signal.settle_price / signal.entry_price - 1) * 100).toFixed(2)}%)
                   </span>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )}
         </div>
