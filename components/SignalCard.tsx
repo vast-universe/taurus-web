@@ -126,13 +126,23 @@ export function SignalCard({ signal }: SignalCardProps) {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between">
-              <span className={`font-medium ${signal.is_win ? 'text-green-400' : 'text-red-400'}`}>
-                {signal.is_win ? '盈利' : '亏损'}
-              </span>
-              <div className={`font-mono font-bold ${signal.is_win ? 'text-green-400' : 'text-red-400'}`}>
-                {signal.pnl && signal.pnl > 0 ? '+' : ''}{signal.pnl?.toFixed(1)}U
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className={`font-medium ${signal.is_win ? 'text-green-400' : 'text-red-400'}`}>
+                  {signal.is_win ? '盈利' : '亏损'}
+                </span>
+                <div className={`font-mono font-bold ${signal.is_win ? 'text-green-400' : 'text-red-400'}`}>
+                  {signal.pnl && signal.pnl > 0 ? '+' : ''}{signal.pnl?.toFixed(1)}U
+                </div>
               </div>
+              {signal.settle_price && (
+                <div className="flex items-center justify-between text-xs text-zinc-500">
+                  <span>结算价: ${signal.settle_price.toLocaleString()}</span>
+                  <span>
+                    {((signal.settle_price / signal.entry_price - 1) * 100).toFixed(2)}%
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>

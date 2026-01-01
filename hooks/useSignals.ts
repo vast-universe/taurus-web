@@ -59,23 +59,36 @@ export function useStats() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const data = await getStats();
-        setStats(data);
-      } catch (e) {
-        console.error('Failed to fetch stats:', e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-    const interval = setInterval(fetchStats, 60000); // 每分钟刷新
-
-    return () => clearInterval(interval);
+  const fetchStats = useCallback(async () => {
+    try {
+      const data = await getStats();
+      setStats(data);
+    } catch (e) {
+      console.error('Failed to fetch stats:', e);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { stats, loading };
+  useEffect(() => {
+    fetchStats();
+    
+    // 监听结算事件，自动刷新统计
+    signalWS.connect();
+    const unsubscribe = signalWS.subscribe((message: WSMessage) => {
+      if (message.type === 'settlement') {
+        // 结算后延迟 500ms 刷新统计（等数据库写入完成）
+        setTimeout(fetchStats, 500);
+      }
+    });
+
+    const interval = setInterval(fetchStats, 60000); // 每分钟刷新
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
+  }, [fetchStats]);
+
+  return { stats, loading, refetch: fetchStats };
 }
