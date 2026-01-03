@@ -84,18 +84,19 @@ export function TickerCard({ ticker }: TickerCardProps) {
               </div>
             </div>
 
-            {/* 净倾向 */}
-            {(() => {
-              const diff = ((ticker.prob_down || 0) - (ticker.prob_up || 0)) * 100;
-              const absDiff = Math.abs(diff);
-              if (absDiff < 3) {
-                return <span className="text-zinc-500 font-mono">中性</span>;
-              }
-              if (diff > 0) {
-                return <span className="text-red-400 font-mono">偏空 +{absDiff.toFixed(0)}%</span>;
-              }
-              return <span className="text-green-400 font-mono">偏多 +{absDiff.toFixed(0)}%</span>;
-            })()}
+            {/* 概率分开显示 */}
+            <div className="flex items-center gap-3">
+              <div>
+                <span className="text-green-400 font-mono">
+                  涨 {((ticker.prob_up || 0) * 100).toFixed(0)}%
+                </span>
+              </div>
+              <div>
+                <span className="text-red-400 font-mono">
+                  跌 {((ticker.prob_down || 0) * 100).toFixed(0)}%
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       ) : (

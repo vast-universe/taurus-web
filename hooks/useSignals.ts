@@ -1,17 +1,17 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Signal, getLatestSignals, getStats, Stats } from '@/lib/api';
+import { Signal, getTodaySignals, getStats, getTodayStats, Stats } from '@/lib/api';
 import { signalWS, WSMessage, SettlementData } from '@/lib/websocket';
 
-export function useSignals(limit = 20) {
+export function useSignals() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchSignals = useCallback(async () => {
     try {
-      const data = await getLatestSignals(limit);
+      const data = await getTodaySignals();
       setSignals(data.signals);
       setError(null);
     } catch (e) {
@@ -19,7 +19,7 @@ export function useSignals(limit = 20) {
     } finally {
       setLoading(false);
     }
-  }, [limit]);
+  }, []);
 
   useEffect(() => {
     fetchSignals();
@@ -34,7 +34,7 @@ export function useSignals(limit = 20) {
           if (prev.some(s => s.id === newSignal.id)) {
             return prev;
           }
-          return [newSignal, ...prev.slice(0, limit - 1)];
+          return [newSignal, ...prev];
         });
       } else if (message.type === 'settlement') {
         const settlement = message.data as SettlementData;
@@ -56,19 +56,24 @@ export function useSignals(limit = 20) {
     return () => {
       unsubscribe();
     };
-  }, [fetchSignals, limit]);
+  }, [fetchSignals]);
 
   return { signals, loading, error, refetch: fetchSignals };
 }
 
 export function useStats() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const [todayStats, setTodayStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchStats = useCallback(async () => {
     try {
-      const data = await getStats();
-      setStats(data);
+      const [allData, todayData] = await Promise.all([
+        getStats(),
+        getTodayStats()
+      ]);
+      setStats(allData);
+      setTodayStats(todayData);
     } catch (e) {
       console.error('Failed to fetch stats:', e);
     } finally {
@@ -96,5 +101,5 @@ export function useStats() {
     };
   }, [fetchStats]);
 
-  return { stats, loading, refetch: fetchStats };
+  return { stats, todayStats, loading, refetch: fetchStats };
 }

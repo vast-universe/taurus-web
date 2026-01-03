@@ -79,6 +79,24 @@ export async function getLatestSignals(limit = 10): Promise<{ signals: Signal[];
   return res.json();
 }
 
+// 获取今日信号
+export async function getTodaySignals(): Promise<{ signals: Signal[]; total: number }> {
+  const res = await fetch(`${API_URL}/api/signals?limit=200`);
+  if (!res.ok) throw new Error('Failed to fetch today signals');
+  const data = await res.json();
+  
+  // 过滤今日信号
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const todaySignals = data.signals.filter((s: Signal) => {
+    const signalDate = new Date(s.created_at);
+    return signalDate >= today;
+  });
+  
+  return { signals: todaySignals, total: todaySignals.length };
+}
+
 // 获取统计数据
 export async function getStats(days?: number): Promise<Stats> {
   const url = days ? `${API_URL}/api/stats?days=${days}` : `${API_URL}/api/stats`;
