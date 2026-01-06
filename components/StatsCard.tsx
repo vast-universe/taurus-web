@@ -176,10 +176,10 @@ export function StatsCard({ stats, todayStats, loading }: StatsCardProps) {
           {/* 回测参考 */}
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-zinc-500">
             <span className="text-zinc-600">回测参考:</span>
-            <span><span className="text-purple-400">S</span> ~81%</span>
-            <span><span className="text-blue-400">A</span> ~75%</span>
-            <span><span className="text-green-400">B</span> ~70%</span>
-            <span><span className="text-zinc-400">C</span> ~63%</span>
+            <span><span className="text-purple-400">S</span> 85.2%</span>
+            <span><span className="text-blue-400">A</span> 80.1%</span>
+            <span><span className="text-green-400">B</span> 72.9%</span>
+            <span><span className="text-zinc-400">C</span> 64.4%</span>
             <span className="text-zinc-600 ml-auto">盈亏平衡: 55.56%</span>
           </div>
         </div>
