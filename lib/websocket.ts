@@ -58,8 +58,15 @@ class SignalWebSocket {
 
       this.ws.onmessage = (event) => {
         try {
-          const message: WSMessage = JSON.parse(event.data);
-          this.handlers.forEach(handler => handler(message));
+          const message = JSON.parse(event.data);
+          
+          // 响应服务端的 ping
+          if (message.type === 'ping') {
+            this.ws?.send(JSON.stringify({ type: 'pong' }));
+            return;
+          }
+          
+          this.handlers.forEach(handler => handler(message as WSMessage));
         } catch (e) {
           console.error('Failed to parse message:', e);
         }
