@@ -6,6 +6,7 @@ import { SignalCard } from '@/components/SignalCard';
 import { StatsCard } from '@/components/StatsCard';
 import { TickerCard } from '@/components/TickerCard';
 import { ConnectionStatus } from '@/components/ConnectionStatus';
+import { KlineStatus } from '@/components/KlineStatus';
 
 export default function Home() {
   const { signals, loading: signalsLoading } = useSignals();
@@ -35,6 +36,15 @@ export default function Home() {
           <div className="grid gap-3 md:grid-cols-2">
             <TickerCard ticker={tickers.BTCUSDT} />
             <TickerCard ticker={tickers.ETHUSDT} />
+          </div>
+        </section>
+
+        {/* K线状态 */}
+        <section>
+          <h2 className="text-lg font-semibold text-white mb-3">特征引擎 K 线</h2>
+          <div className="grid gap-3 md:grid-cols-2">
+            <KlineStatus symbol="BTCUSDT" />
+            <KlineStatus symbol="ETHUSDT" />
           </div>
         </section>
 

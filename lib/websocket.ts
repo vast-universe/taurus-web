@@ -6,7 +6,7 @@ import { Signal } from './api';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws';
 
-export type MessageType = 'signal' | 'settlement' | 'ticker';
+export type MessageType = 'signal' | 'settlement' | 'ticker' | 'kline';
 
 export interface TickerMessage {
   symbol: string;
@@ -19,9 +19,22 @@ export interface TickerMessage {
   timestamp: string;
 }
 
+export interface KlineMessage {
+  symbol: string;
+  timestamp: number;
+  time_utc: string;
+  time_beijing: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  total_klines: number;
+}
+
 export interface WSMessage {
   type: MessageType;
-  data: Signal | SettlementData | TickerMessage;
+  data: Signal | SettlementData | TickerMessage | KlineMessage;
 }
 
 export interface SettlementData {
