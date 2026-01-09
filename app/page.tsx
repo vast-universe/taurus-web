@@ -39,7 +39,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* K线状态 */}
+        {/* K线状态 - 暂时隐藏
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">特征引擎 K 线</h2>
           <div className="grid gap-3 md:grid-cols-2">
@@ -47,6 +47,7 @@ export default function Home() {
             <KlineStatus symbol="ETHUSDT" />
           </div>
         </section>
+        */}
 
         <StatsCard stats={stats} todayStats={todayStats} loading={statsLoading} />
 
@@ -76,9 +77,14 @@ export default function Home() {
               <h2 className="text-lg font-semibold text-white">今日信号</h2>
               <span className="text-sm text-zinc-500">({settledSignals.length} 条)</span>
             </div>
-            <a href="/analysis" className="text-sm text-blue-400 hover:text-blue-300">
-              查看回测分析 →
-            </a>
+            <div className="flex gap-4">
+              <a href="/backtest-compare" className="text-sm text-yellow-400 hover:text-yellow-300">
+                回测对比 →
+              </a>
+              <a href="/analysis" className="text-sm text-blue-400 hover:text-blue-300">
+                历史分析 →
+              </a>
+            </div>
           </div>
           
           {signalsLoading ? (
